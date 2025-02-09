@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 
 export const useSocket = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
-
   useEffect(() => {
     const webSoc = new WebSocket(import.meta.env.VITE_SOCKET_URL);
 
@@ -11,8 +10,10 @@ export const useSocket = () => {
       setSocket(webSoc);
 
       setTimeout(() => {
-        webSoc.send("Hello Server!"); 
-        webSoc.send(JSON.stringify({ message: "connect" }));
+       // webSoc.send("Hello Server!"); 
+        webSoc.send(JSON.stringify({ type: "connect",payload:{
+          SDP:"somethign"
+        } }));
         console.log("Message sntt to server");
       }, 1000);
     };

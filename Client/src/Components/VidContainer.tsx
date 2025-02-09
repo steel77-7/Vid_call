@@ -16,7 +16,7 @@ export default function VidContainer({ stream }: ContainerVid) {
 
   return (
     <>
-      <div className="w-96 h-96 border border-b-black">
+      <div className="w-96 h-96 border border-b-black scale-x-[-1]">
         <video id="localVideo" ref={videoRef} autoPlay playsInline controls={false} />
       </div>
     </>
