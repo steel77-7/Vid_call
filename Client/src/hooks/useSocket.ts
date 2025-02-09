@@ -7,16 +7,25 @@ export const useSocket = () => {
     const webSoc = new WebSocket(import.meta.env.VITE_SOCKET_URL);
 
     webSoc.onopen = () => {
+      console.log("WebSocket opened");
       setSocket(webSoc);
-      socket?.send(JSON.stringify({message:"connect"}))
+
+      setTimeout(() => {
+        webSoc.send("Hello Server!"); 
+        webSoc.send(JSON.stringify({ message: "connect" }));
+        console.log("Message sntt to server");
+      }, 1000);
     };
 
-    webSoc.onclose = () => {
-      setSocket(null);
+    webSoc.onerror = (e) => {
+      console.error("WebSocket error:", e);
     };
 
-    return ()=> webSoc.close();
+    return () => {
+      console.log("Closing WebSocket connectoin");
+      webSoc.close();
+    };
   }, []);
 
-  return socket ? socket : null;
+  return socket;
 };

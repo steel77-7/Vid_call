@@ -16,8 +16,8 @@ export default function () {
   });
 
   const socket = useSocket();
+  console.log(socket)
   const [self, setSelf] = useState<any>();
-
   async function playVideoFromCamera() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia(selfStream);
@@ -30,6 +30,20 @@ export default function () {
   useEffect(() => {
     playVideoFromCamera();
   }, []);
+
+  useEffect(() => {
+    if (!socket) {
+      console.log("its empty");
+      return;
+    }
+console.log('here');
+
+console.log(socket);
+    socket.send(JSON.stringify({ message: "afkjg" }));
+    socket.onmessage=(event:any) => {
+      console.log(event);
+    };
+  }, [socket]);
 
   return (
     <>
