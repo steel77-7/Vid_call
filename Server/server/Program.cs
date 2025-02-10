@@ -5,9 +5,10 @@ using System.Text.Json;
 using System.Net.WebSockets;
 using server.Api.EndPoints;
 using server.Api.Dtos;
-
+using server.Api.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<SocketHelper>();
 var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
@@ -20,7 +21,7 @@ app.UseWebSockets(webSocketOptions);
 HashSet<WebSocket> rooms = new HashSet<WebSocket>();
 
 
-async Task RecieveInfoAsync(WebSocket ws, byte[] buffer)
+/* async Task RecieveInfoAsync(WebSocket ws, byte[] buffer)
 {
     var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
@@ -74,27 +75,8 @@ break ;
     //ice candidate ka kon lgaega bc
 
 
-    /*   string message = data;
-      var bytes = Encoding.UTF8.GetBytes(message);
-      var arraySegment = new ArraySegment<byte>(bytes, 0, bytes.Length);
-      if (ws.State == WebSocketState.Open)
-      {
-          Console.WriteLine("sending message" + data);
-          await ws.SendAsync(arraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
-      }
-
-      //if the connection closed in between
-      else if (ws.State == WebSocketState.Closed || ws.State == WebSocketState.Aborted
-               )
-      {
-          Console.WriteLine("ws state rn ::" + ws.State);
-
-          Console.WriteLine("Connection closed");
-          await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
-          return true;
-      } */
     return false;
-}
+} */
 
 
 //dunno what to do after this 
@@ -107,21 +89,24 @@ app.Map("/ws", async (context) =>
         using var ws = await context.WebSockets.AcceptWebSocketAsync();
         rooms.Add(ws);
 
-        Console.WriteLine();
-        while (ws.State == WebSocketState.Open)
-        {
-            //receive 
-            await RecieveInfoAsync(ws, buffer);
-            //sending 
-            //     if (await SendInfoAsync(ws, "hello")) break;
+        /*    Console.WriteLine();
+           while (ws.State == WebSocketState.Open)
+           {
+               //receive 
+               await RecieveInfoAsync(ws, buffer);
+               //sending 
+               //     if (await SendInfoAsync(ws, "hello")) break;
 
-        }
-        Console.WriteLine("ws state rn ::" + ws.State);
+           }
+           Console.WriteLine("ws state rn ::" + ws.State);
 
-        Console.WriteLine("Connection closed outside of the loop");
-        _ = ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
-        rooms.Clear();
-        ws.Dispose();
+           Console.WriteLine("Connection closed outside of the loop");
+           _ = ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+           rooms.Clear();
+           ws.Dispose(); */
+
+        SocketHelper Ws = new SocketHelper();
+        await Ws.HandleSocketConnection(ws);
     }
     else
     {

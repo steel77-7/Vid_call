@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState, useRef } from "react";
 import { useSocket } from "../hooks/useSocket";
 import VidContainer from "../Components/VidContainer";
 import { peerConnection } from "../utils/webRtc";
+
+import{generateId} from "../utils/generateId"
 interface Self {
   video: boolean;
   audio: boolean;
@@ -36,30 +38,29 @@ export default function () {
       JSON.stringify({
         type: "offer",
         payload: {
+          RoomId : generateId(10),
           SDP: offer,
         },
       })
     );
   }, []);
 
-
-
-  //joining rooms
-  //signaling to the serverand then it wouldgive me the others session description
-  //but how to handle the ice candidates...I forgot
-  //on new ice candidates re issue the sdp and then send it to the server...or on new connection to the same room (answer) give the person the sdp of others and then his to theirs and then add it to the map////DONE
   const joinRoom = useCallback(async (offer: any) => {
     const pc = new peerConnection();
     lc.current = pc;
-    const ans = await lc.current.getAnswer(offer);
-    socket?.send(
-      JSON.stringify({
-        type: "answer",
-        payload: {
-          SDP: ans,
-        },
-      })
-    );
+    try {
+      const ans = await lc.current.getAnswer(offer);
+      socket?.send(
+        JSON.stringify({
+          type: "answer",
+          payload: {
+            SDP: ans,
+          },
+        })
+      );
+    } catch (e: any) {
+      console.log(e);
+    }
   }, []);
 
   const sendStream = useCallback(() => {
@@ -79,17 +80,17 @@ export default function () {
     }
   }
 
-
-
-async function handleIceCandidates(){ 
-  if(!lc.current) return ; 
-  lc.current?.peer.addEventListener("icecandidate", (e:any )=>{
-    if(!e.candidate)return  
-    await lc.current?.handleIceCandidate();
-    
-  })
-
-}
+  async function handleIceCandidates() {
+    if (!lc.current) return;
+    lc.current?.peer.addEventListener("icecandidate", async (e: any) => {
+      try {
+        if (!e.candidate) return;
+        await lc.current?.peer.addIceCandidate(e.candidate);
+      } catch (e: any) {
+        console.log(e);
+      }
+    });
+  }
 
   useEffect(() => {
     playVideoFromCamera();
@@ -100,7 +101,7 @@ async function handleIceCandidates(){
       console.log("its empty");
       return;
     }
-    console.log("here");
+    console.log(Math.random().toString(36).slice(2),Math.random().toString(36).slice(2));
     /* 
     console.log(socket);
     socket.send(

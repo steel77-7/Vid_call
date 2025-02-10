@@ -7,14 +7,13 @@ public static class VidCallEndPoints
 
 
 
-    public Dictionary<string ,WebSocket>  room;
     public static RouteGroupBuilder MapCallEndPoints(this WebApplication app)
     {
         var group = app.MapGroup("call").WithParameterValidation();
 
-        group.MapGet("/make-room/:id", (string id) =>{ 
-
-        });
+     /*    group.MapPost("/make-room/:id", (string id) =>{ 
+            room.Add
+        }); */
 
         return group;
     }

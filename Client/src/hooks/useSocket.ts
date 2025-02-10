@@ -1,4 +1,4 @@
-import { useState, useEffect,useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export const useSocket = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -10,10 +10,10 @@ export const useSocket = () => {
       setSocket(webSoc);
 
       setTimeout(() => {
-       // webSoc.send("Hello Server!"); 
-        webSoc.send(JSON.stringify({ Type: "connect",Payload:{
-          SDP:"somethign",Icecandidate :"here tooo"
-        } }));
+        // webSoc.send("Hello Server!");
+        webSoc.send(
+          JSON.stringify({ Type: "connect", Payload: { SDP: "sdfkjgn" } })
+        );
         console.log("Message sntt to server");
       }, 1000);
     };
