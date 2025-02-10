@@ -13,6 +13,8 @@ public class Message
     {
         try
         {
+
+            Console.WriteLine(encodedData);
             var decodedData = JsonSerializer.Deserialize<DataStructure>(encodedData);
             if (decodedData == null)
             {
@@ -22,8 +24,14 @@ public class Message
         }
         catch (Exception ex)
         {
+
+
             Console.WriteLine("Exception occured : " + ex);
             return new DataStructure();
+        }
+        finally { 
+
+            Console.WriteLine("JSon serialization here ");
         }
     }
 
@@ -40,5 +48,8 @@ public class DataStructure{
 
 public class PayloadData{ 
 
-    public string SDP {get;set;}
+    public string? SDP {get;set;}
+
+    public string? IceCandidate {get;set;}
+
 }

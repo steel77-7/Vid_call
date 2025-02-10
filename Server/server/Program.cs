@@ -32,7 +32,7 @@ async Task RecieveInfoAsync(WebSocket ws, byte[] buffer)
         var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
         var data = new Message(message);
         // Console.WriteLine($"Recieved : {data.Decode().Type} , Message : {data.Decode().Payload.SDP}");
-        Console.WriteLine($"Recieved : {data.Decode().Type} , Message : {2}");
+        Console.WriteLine($"Recieved : {data.Decode().Type} , Message : {data.Decode().Payload.SDP}");
 
         //  Console.WriteLine($"Recieved : {data.Decode()["type"]} , Message : {data.Decode()["payload"]}");
         // var data = JsonSerializer.Deserialize<Dictionary<string, object>>(message);
@@ -57,12 +57,17 @@ async Task<bool> SendInfoAsync(WebSocket ws, DataStructure data)
             await ws.SendAsync(arraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
             break;
         case "answer":
+
+        //not how to answere
             var answer = JsonSerializer.Serialize(data);
             var bytesA = Encoding.UTF8.GetBytes(answer);
             var arraySegmentA = new ArraySegment<byte>(bytesA, 0, bytesA.Length);
             await ws.SendAsync(arraySegmentA, WebSocketMessageType.Text, true, CancellationToken.None);
             break;
+case "icecandidates" :
+    
 
+break ; 
 
     }
 

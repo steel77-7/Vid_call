@@ -11,8 +11,8 @@ export const useSocket = () => {
 
       setTimeout(() => {
        // webSoc.send("Hello Server!"); 
-        webSoc.send(JSON.stringify({ type: "connect",payload:{
-          SDP:"somethign"
+        webSoc.send(JSON.stringify({ Type: "connect",Payload:{
+          SDP:"somethign",Icecandidate :"here tooo"
         } }));
         console.log("Message sntt to server");
       }, 1000);

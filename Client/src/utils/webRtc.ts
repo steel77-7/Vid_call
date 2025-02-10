@@ -21,11 +21,11 @@ export class peerConnection {
 
 
   //push the icecandidated into the peer obj
-  async handleIceCandidate() {
+ /*  async handleIceCandidate() {
     this.peer.onicecandidate = async (event) => {
       await this.peer.addIceCandidate(event.candidate?.toJSON());
     };
-  }
+  } */
 
   //give the answer here
   async getAnswer(offer: any) {
