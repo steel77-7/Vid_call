@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-
+import {generateId} from "../utils/generateId"
 export const useSocket = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   useEffect(() => {
@@ -12,7 +12,7 @@ export const useSocket = () => {
       setTimeout(() => {
         // webSoc.send("Hello Server!");
         webSoc.send(
-          JSON.stringify({ Type: "connect", Payload: { SDP: "sdfkjgn" } })
+          JSON.stringify({ Type: "connect", Payload: { UserId:'some' }})
         );
         console.log("Message sntt to server");
       }, 1000);

@@ -11,28 +11,28 @@ public class Message
     }
     public DataStructure Decode()
     {
+         var options = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true,
+        AllowTrailingCommas = true
+    };
         try
         {
-
-            Console.WriteLine(encodedData);
-            var decodedData = JsonSerializer.Deserialize<DataStructure>(encodedData);
+           // Console.WriteLine(encodedData);
+          
+            var decodedData = JsonSerializer.Deserialize<DataStructure>(encodedData,options);
             if (decodedData == null)
             {
-                throw new Exception("Json data was serialized in Message.cs");
+                throw new Exception("Json data was not serialized in Message.cs");
             }
             return decodedData;
         }
         catch (Exception ex)
         {
-
-
             Console.WriteLine("Exception occured : " + ex);
             return new DataStructure();
         }
-        finally { 
-
-            Console.WriteLine("JSon serialization here ");
-        }
+       
     }
 
 }
@@ -53,5 +53,16 @@ public class PayloadData{
     public string? IceCandidate {get;set;}
     public string? RoomId {get;set;}
 
+    public string? UserId {get;set;}
+
+
 
 }
+
+/* public class Sdp { 
+    public string? sdp{get;set;}
+    public string? type{get;set;}
+
+} */
+
+

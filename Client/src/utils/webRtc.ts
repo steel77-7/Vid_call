@@ -30,7 +30,7 @@ export class peerConnection {
   //give the answer here
   async getAnswer(offer: any) {
     if (!this.peer) return;
-    await this.peer.setRemoteDescription(offer);
+    await this.peer.setRemoteDescription(new RTCSessionDescription(offer));
     const answer = await this.peer.createAnswer();
     await this.peer.setLocalDescription(new RTCSessionDescription(answer));
     return answer;
