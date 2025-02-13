@@ -16,12 +16,29 @@ export class peerConnection {
 
   //set the local description here
   async setLocalDescription(sdp: any) {
-    if (this.peer) this.peer.setLocalDescription(sdp);
+    if (this.peer)
+      this.peer.setLocalDescription(new RTCSessionDescription(sdp));
+  }
+  async setRemoteDescription(sdp: any) {
+    console.log(sdp);
+    if (this.peer)
+      this.peer.setRemoteDescription(new RTCSessionDescription(sdp));
   }
 
 
+  //adding the icecandidate frrom here 
+  async addIceCandidate(data: any) {
+    try {
+      await this.peer.addIceCandidate(
+        new RTCIceCandidate(JSON.parse(data.Payload.Candidate))
+      );
+    } catch (e: any) {
+      console.error(e);
+    }
+  }
+
   //push the icecandidated into the peer obj
- /*  async handleIceCandidate() {
+  /*  async handleIceCandidate() {
     this.peer.onicecandidate = async (event) => {
       await this.peer.addIceCandidate(event.candidate?.toJSON());
     };

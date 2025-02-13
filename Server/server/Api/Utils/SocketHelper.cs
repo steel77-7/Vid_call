@@ -14,10 +14,13 @@ public class SocketHelper
     private byte[] buffer = new byte[1024 * 4];
     private async Task Send(WebSocket ws, DataStructure data)
     {
-        var toSend = JsonSerializer.Serialize(data);
-        var bytes = Encoding.UTF8.GetBytes(toSend);
-        var arraySegment = new ArraySegment<byte>(bytes, 0, bytes.Length);
-        await ws.SendAsync(arraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
+        if (ws.State == WebSocketState.Open)
+        {
+            var toSend = JsonSerializer.Serialize(data);
+            var bytes = Encoding.UTF8.GetBytes(toSend);
+            var arraySegment = new ArraySegment<byte>(bytes, 0, bytes.Length);
+            await ws.SendAsync(arraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
+        }
     }
     public void AddRoom(string roomId, User user)
     {
@@ -40,9 +43,10 @@ public class SocketHelper
 
     public async Task SendInfoAsync(DataStructure data, WebSocket ws)
     {
-        Console.WriteLine($"data {data.Type}");
         if (ws.State == WebSocketState.Open)
+
         {
+            Console.WriteLine($"data {data.Type}");
 
             switch (data.Type)
             {
@@ -62,22 +66,42 @@ public class SocketHelper
                     {
                         if (!(i.Key == data.Payload.UserId))
                         {
-                            Console.WriteLine($"Sending message to {i.Key}");
-                            await Send(ws, data);
+                            Console.WriteLine($"Sending  to {i.Key}");
+                            await Send(i.Value.Ws, data);
                         }
                     }
                     break;
 
                 case "answer":
-                    Console.WriteLine("answer");
-
-                    await Send(ws, data);
+                    Console.WriteLine("answer: ");
+                    data.Type = "answer";
+                    if (!room.ContainsKey(data.Payload.RoomId))
+                    {
+                        Console.WriteLine("Room not found :" + data.Payload.RoomId);
+                        return;
+                    }
+                    foreach (var i in room[data.Payload.RoomId])
+                    {
+                        if (!(i.Key == data.Payload.UserId))
+                        {
+                            Console.WriteLine($"Sending answer to {i.Key}");
+                            await Send(i.Value.Ws, data);
+                        }
+                    }
                     break;
 
                 case "icecandidate":
                     Console.WriteLine("icecandidate");
+                    data.Type = "icecandidate";
 
-                    await Send(ws, data);
+                    foreach (var i in room[data.Payload.RoomId])
+                    {
+                        if (!(i.Key == data.Payload.UserId))
+                        {
+                            Console.WriteLine($"Sending icecandidates to {i.Key}");
+                            await Send(i.Value.Ws, data);
+                        }
+                    }
                     break;
             }
             //var toSend = JsonSerializer.Serialize(data);
@@ -138,7 +162,7 @@ public class SocketHelper
 public class User
 {
 
-    WebSocket Ws { get; set; }
+    public WebSocket Ws { get; set; }
     public string Id { get; set; }
     public User(WebSocket ws, string Id)
     {
